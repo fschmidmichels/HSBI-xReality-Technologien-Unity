@@ -112,3 +112,7 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Claude Code: lokale Einstellungen und die Meta-XR-Operator-Skills (Teil des Meta XR Core SDK,
+# Oculus SDK License) nicht versionieren. Die Skills installiert jeder selbst über das AI-Tools-Panel des Meta XR SDK.
+/.claude/

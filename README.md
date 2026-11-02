@@ -82,6 +82,13 @@ Alternativ die APK in Meta Quest Developer Hub per Drag-and-Drop installieren. D
 | Meta XR All-in-One SDK (inkl. Core, Interaction, MR Utility Kit, Audio, Voice, Platform, Haptics) | Unity Package Manager / [Meta Developer](https://developers.meta.com/horizon/downloads/package/meta-xr-sdk-all-in-one-upm/) | [Meta Platform Technologies SDK License](https://developers.meta.com/horizon/licenses/oculussdk/) |
 | Unity-Pakete (URP, OpenXR, Input System, XR Hands u. a.) | Unity Package Manager (Unity Registry) | [Unity Companion License](https://unity.com/legal/licenses/unity-companion-license) |
 | URP-Projektvorlage (`Assets/TutorialInfo`, `Assets/Settings`, `SampleScene`) | Unity Hub, Vorlage *Universal 3D* | Unity Companion License |
+| Bowling-Pin-Modell (`Assets/Bowling/Models/BowlingPin.fbx`) | [VRTK.Tutorials.VRBowling](https://github.com/ExtendRealityLtd/VRTK.Tutorials.VRBowling) von Extend Reality Ltd, [Tutorial 01 „Making a VR Bowling Game“](https://github.com/ExtendRealityLtd/VRTK.Tutorials.VRBowling/tree/master/Documentation/Tutorials/01.MakingAVRBowlingGame) | [MIT License](https://github.com/ExtendRealityLtd/VRTK.Tutorials.VRBowling/blob/master/LICENSE.md), Copyright (c) 2020 Extend Reality Ltd |
+| Skripte `Pin.cs`, `PinGroup.cs` (`Assets/Bowling/Scripts`) | wie oben; angepasst: ohne Zinnia-Abhängigkeit, Unity-6-API (`linearVelocity`), Zurücksetzen der Pins über den Rigidbody | MIT License, Copyright (c) 2020 Extend Reality Ltd |
+| Sound Strike (`Assets/Bowling/Sounds/766871__zusisking__…wav`) | [freesound.org – ZusIsKing, „SPRTInd-Int_BowlingStrike_Zus_OwSfx_Hard“](https://freesound.org/people/ZusIsKing/sounds/766871/) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| Sound Pins (`Assets/Bowling/Sounds/151204__bruce-burbank__…aiff`, daraus geschnitten `Sounds/PinHits/PinHit_01–06.wav`) | [freesound.org – Bruce Burbank, „bowling pins stereo.aif“](https://freesound.org/people/Bruce%20Burbank/sounds/151204/) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| Sound Rollen (`Assets/Bowling/Sounds/260778__squirmtheverm__rolling-ball-loop.wav`) | [freesound.org – SquirmTheVerm, „Rolling Ball Loop“](https://freesound.org/people/SquirmTheVerm/sounds/260778/) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+
+Der vollständige Lizenztext für die VRTK-Inhalte liegt in [`Assets/Bowling/LICENSE_VRTK.md`](Assets/Bowling/LICENSE_VRTK.md). Eine Übersicht der Quellen aller Inhalte unter `Assets/Bowling` steht in [`Assets/Bowling/QUELLEN.md`](Assets/Bowling/QUELLEN.md).
 
 Darüber hinaus werden derzeit keine Assets aus dem Unity Asset Store oder anderen Drittquellen verwendet. Neue externe Assets bitte hier mit Quelle und Lizenz ergänzen.
 
@@ -92,3 +99,15 @@ Darüber hinaus werden derzeit keine Assets aus dem Unity Asset Store oder ander
 | Claude Code (Anthropic) | Erstellung dieser README auf Basis der Projektdateien (Unity-Version, Paketliste, XR-Einstellungen) |
 
 Weitere eingesetzte KI-Werkzeuge (z. B. für Code, Texturen, 3D-Modelle, Audio) bitte hier mit Zweck ergänzen.
+
+### Meta-XR-Operator-Skills für KI-Agenten
+
+Das Meta XR Core SDK bringt Skills für KI-Coding-Agenten mit (z. B. Claude Code). Mit ihnen kann ein Agent die laufende App über den experimentellen **Meta XR Operator** steuern und testen: Kopf- und Controller-Position setzen, Tasten drücken, greifen und stoßen. Die Skills gehören zum SDK und stehen unter der [Meta Platform Technologies SDK License](https://developers.meta.com/horizon/licenses/oculussdk/). Sie sind deshalb **nicht im Repository enthalten**; der Ordner `.claude/` ist in der `.gitignore` ausgeschlossen.
+
+Installation (einmal pro Rechner bzw. Projektkopie):
+
+1. In Unity **Edit → Preferences → Meta XR → AI Tools** öffnen.
+2. Im Abschnitt zu den Skills die Meta-XR-Operator-Skills installieren. Sie werden nach `.claude/skills/` im Projektordner kopiert.
+3. Den Agenten aus dem Projektordner starten (dem Ordner mit `Assets/`), damit er die Skills findet.
+
+Weitere Informationen: [Meta XR Operator – Getting Started](https://developers.meta.com/vr/documentation/unity/meta-xr-operator/getting-started/)
