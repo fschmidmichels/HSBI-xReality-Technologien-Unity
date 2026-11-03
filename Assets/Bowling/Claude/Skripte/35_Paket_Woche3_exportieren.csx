@@ -6,6 +6,7 @@ var roots = new[] {
     "Assets/Bowling/Prefabs/BowlingHall.prefab",
     "Assets/Bowling/LICENSE_VRTK.md",
     "Assets/Bowling/QUELLEN.md",
+    "Assets/Bowling/Scripts/BallAudio.cs",   // wird von PinAudio.cs verwendet, sonst Kompilierfehler
 };
 var deps = new System.Collections.Generic.SortedSet<string>(AssetDatabase.GetDependencies(roots, true));
 foreach (var r in roots) deps.Add(r);
