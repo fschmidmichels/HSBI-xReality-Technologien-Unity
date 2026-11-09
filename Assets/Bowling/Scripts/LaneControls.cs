@@ -11,6 +11,9 @@ public class LaneControls : MonoBehaviour
     [Tooltip("Rigidbody der Bowlingkugel.")]
     public Rigidbody ball;
 
+    [Tooltip("BallReturn an BowlingLane/Zones/PitZone (optional).")]
+    public BallReturn ballReturn;
+
     private Vector3 ballStartPosition;
     private Quaternion ballStartRotation;
 
@@ -41,8 +44,18 @@ public class LaneControls : MonoBehaviour
 
     public void ResetBallAndPins()
     {
-        pinGroup.ResetPositions();
+        // Beendet den Frame wie nach zwei Würfen: Score in die Liste, Score 0, Pins neu.
+        if (ballReturn != null)
+        {
+            ballReturn.CancelPendingThrow();
+        }
+        pinGroup.EndFrame();
+        ReturnBall();
+    }
 
+    // Legt die Kugel zurück auf die Ablage, ohne Pins und Score zu ändern (auch für BallReturn).
+    public void ReturnBall()
+    {
         ball.linearVelocity = Vector3.zero;
         ball.angularVelocity = Vector3.zero;
         ball.position = ballStartPosition;

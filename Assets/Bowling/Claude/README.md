@@ -28,6 +28,9 @@ Jede Datei zeigt den **letzten Stand**, mit dem sie ausgeführt wurde. Einige We
 | `Assets/Bowling/Materials/*.mat` | URP-Lit-Materialien |
 | `Assets/Bowling/PhysicsMaterials/*.physicMaterial` | `LaneSurface`, `Bumper`, `Pin`, `Ball` |
 | `Assets/Bowling/Scripts/Pin.cs`, `PinGroup.cs` | aus dem VRTK-Tutorial, ohne Zinnia angepasst |
+| `Assets/Bowling/Scripts/ScoreScript.cs`, Objekt `ScoreBoard` | Score-Anzeige (TextMeshPro, World-Space-Canvas auf der Blende über den Pins) |
+| `Assets/Bowling/Scripts/ScoreHistory.cs`, Objekt `ScoreHistoryBoard` | Liste der letzten 10 Frame-Scores links neben der Score-Anzeige |
+| `Assets/Bowling/Scripts/BallReturn.cs` | Kugelrückholung und Wurfzählung an `PitZone` |
 | `Assets/Bowling/LICENSE_VRTK.md` | MIT-Lizenz der VRTK-Inhalte |
 
 ## Schritt 1 – Projekt und Szene untersuchen
@@ -55,7 +58,7 @@ Skript: [`02_Bahn_bauen.csx`](Skripte/02_Bahn_bauen.csx)
 | `Gutters/Gutter_*` | je 0,235 m breit, Boden 4,8 cm unter der Bahn; `Capping_*` als Abschlussleiste |
 | `Bumpers/Bumper_*` | 0,1 m breit, oben bei 0,18 m, z = 0,3–18,9. **`Bumpers` deaktivieren = Bumper aus** |
 | `Pit` | Boden bei −0,3 m, `Kickback_*` als Seitenwände ab z = 17,3 |
-| `Zones` | Trigger `GutterZone_Left/Right`, `PitZone` ohne Skript (für die Rückholung durch die Studierenden) |
+| `Zones` | Trigger `GutterZone_Left/Right`, `PitZone` (für die Rückholung; `BallReturn` seit Schritt 28 als Szenen-Override) |
 | `Hall` | Boden des Spielbereichs, Flächen neben der Bahn, Rückwand |
 | `Pins` | Dreieck, Abstand 0,3048 m, Pin 1 bei z = 18,288 |
 
@@ -420,8 +423,71 @@ Unity begrenzt die Winkelgeschwindigkeit von Rigidbodies standardmäßig auf 50 
 - Die projektweite Einstellung *Default Max Angular Speed* bleibt bei 50, damit die Pins nicht betroffen sind.
 - Der gleiche Code steht in `Woche_3.md` (Block 4, Bewegungsanalyse).
 
+## Schritt 27 – Score-Anzeige
+
+Skript: [`38_Score_Anzeige.csx`](Skripte/38_Score_Anzeige.csx)
+
+Umsetzung nach dem früheren VRTK-Projekt: Ein statischer Zähler in `ScoreScript`, den `Pin.HidePin()` hochzählt.
+
+1. **TMP Essential Resources** importiert (`TMPro.TMP_PackageResourceImporter.ImportResources(true, false, false)`), dadurch neuer Ordner `Assets/TextMesh Pro/` mit `TMP Settings` und Schrift *LiberationSans SDF*.
+2. Neues Skript `Assets/Bowling/Scripts/ScoreScript.cs`, nah am Original:
+   - `public static int scoreValue`, Text `"Score: " + scoreValue` in `Update()`.
+   - **Neu:** `Awake()` setzt `scoreValue = 0`. Statische Werte überleben das Neuladen der Szene, sonst würde der alte Score nach dem Szenen-Reset (3× Menütaste) weiterlaufen.
+   - **Neu:** `ResetScore()`, aufgerufen von `LaneControls.ResetBallAndPins()` (X-Taste).
+3. `Pin.HidePin()` zählt `ScoreScript.scoreValue += 1`, aber nur wenn der Pin noch aktiv ist. `CheckRotation` läuft per `InvokeRepeating` jede Sekunde und plant `HidePin` dabei mehrfach ein; der `activeSelf`-Check verhindert Doppelzählung.
+4. Objekt **`ScoreBoard`** in `BowlingVR` (Szenen-Root, nicht im Prefab): Canvas im Modus *World Space*, 480 × 128 Einheiten mit Scale 0,00625 = **3 m × 0,8 m**, Mitte bei (0, 2,0, 17,24).
+   - Die Anzeige sitzt auf der Vorderseite der Blende (`MaskingUnit/Masking`, z = 17,25) zwischen `Neon_Unten` und `Neon_Oben`. Ein erster Versuch an der Rückwand (z = 20,2) war vom Anlauf aus durch die Blende verdeckt.
+   - Kinder: `Background` (dunkles `Image`) und `ScoreText` (`TextMeshProUGUI`, fett, Größe 96, weiß) mit `ScoreScript`.
+   - Kein `GraphicRaycaster` und kein EventSystem, da die Anzeige nicht bedient wird.
+
+Test im Play Mode mit `TestBall`: 5 von 10 Pins umgefallen und ausgeblendet, Anzeige „Score: 5“, der Wert blieb danach stabil. `ResetBallAndPins()` und `SceneResetter.ResetScene()` setzten den Score jeweils auf 0.
+
+![Score-Anzeige aus Spielersicht (Zoom)](Bilder/score_anzeige.png)
+
+## Schritt 28 – Automatische Kugelrückholung
+
+Skript: [`39_Kugelrueckholung.csx`](Skripte/39_Kugelrueckholung.csx)
+
+Kommt die Kugel im Pit an, liegt sie nach 2 s wieder auf der Ablage. Pins und Score bleiben stehen, so ist ein zweiter Wurf auf die restlichen Pins möglich.
+
+- `LaneControls.cs`: Der Kugel-Teil von `ResetBallAndPins()` steht jetzt in der öffentlichen Methode **`ReturnBall()`**. `ResetBallAndPins()` (X-Taste) ruft sie weiterhin auf und verhält sich wie vorher.
+- Neues Skript `Assets/Bowling/Scripts/BallReturn.cs` an `BowlingLane/Zones/PitZone` (Trigger). `OnTriggerEnter` prüft `other.attachedRigidbody == laneControls.ball`, damit in den Pit fallende Pins nichts auslösen, und ruft nach `returnDelay` (Standard 2 s, per `Invoke`) `laneControls.ReturnBall()` auf.
+- Die Komponente ist ein **Szenen-Override** der Prefab-Instanz, weil sie auf `LaneControls` (Szenenobjekt) verweist. Das Prefab `BowlingLane` bleibt unverändert.
+- `TestBall` wird nicht zurückgeholt.
+
+Test im Play Mode (Kugel per `eval` mit 7 m/s geworfen): Die Kugel lag 2 s nach Ankunft im Pit wieder auf der Ablage bei (1, 0,91, −1,5), Geschwindigkeit 0. Der Score blieb erhalten (5). Ein zweiter Wurf löste die Rückholung erneut aus, Score 5 → 8. Die X-Taste setzte danach Pins, Score und Kugel zurück.
+
+> **Später geändert:** Seit Schritt 29 beendet die X-Taste einen Frame, der Score kommt in die Liste.
+
+## Schritt 29 – Frames: Pins nach zwei Würfen neu aufstellen, Liste der alten Scores
+
+Skript: [`40_Frames_und_Liste.csx`](Skripte/40_Frames_und_Liste.csx)
+
+Wie in einem Bowling-Frame werden die Pins nach **zwei Würfen** automatisch neu aufgestellt, nach einem **Strike** schon nach dem ersten Wurf. Dabei kommt der Score in eine Liste und wird auf 0 gesetzt.
+
+**Ablauf:** Ein Wurf endet, wenn die Kugel im Pit ankommt. Auch Rinnenkugeln landen dort. `BallReturn` holt die Kugel weiterhin nach 2 s zurück und zählt den Wurf nach **5 s** (`pinResetDelay`). Das muss so spät sein, weil `Pin` umgefallene Pins erst nach `toppleLife` = 3 s (Prüfung im 1-s-Takt) ausblendet und zählt. Ein früheres Neuaufstellen bricht über `CancelToppleCheck()` das `HidePin` ab, und diese Pins fehlen dann im Score.
+
+- `PinGroup.cs`: `throwsPerFrame` (Standard 2), `StandingPins()`, `RegisterThrow()` (Wurf zählen, bei 2 Würfen oder 0 stehenden Pins `EndFrame()`) und `EndFrame()` (Score in die Liste, Pins neu). Leere Frames, also X ohne Wurf und ohne Punkte, werden nicht eingetragen. `ResetPositions()` setzt den Wurfzähler zurück.
+- `ScoreScript.cs`: statische Liste `history` und `EndFrame()` (`history.Add(scoreValue)`, Score 0). `Awake()` leert die Liste beim Neuladen der Szene.
+- `BallReturn.cs`: `pinResetDelay` und `EndThrow()` → `laneControls.pinGroup.RegisterThrow()`. Mit `CancelPendingThrow()` kann ein offener Wurf abgebrochen werden.
+- `LaneControls.cs`: Die **X-Taste beendet den Frame** wie nach zwei Würfen: `ballReturn.CancelPendingThrow()`, `pinGroup.EndFrame()`, `ReturnBall()`. Das neue Feld `ballReturn` ist in der Szene auf `PitZone` verdrahtet.
+- Neues Skript `ScoreHistory.cs`: zeigt die letzten `maxEntries` = 10 Frames mit ihrer tatsächlichen Frame-Nummer in zwei Spalten à 5 Zeilen. Die zweite Spalte setzt das TMP-Tag `<pos=50%>`. Ab Frame 11 fallen die ältesten Einträge heraus.
+- Objekt **`ScoreHistoryBoard`**: World-Space-Canvas, 352 × 296 Einheiten mit Scale 0,00625 = 2,2 m × 1,85 m, Mitte bei (−2,75, 2,03, 17,24), also links vom `ScoreBoard` auf der Blende. Kind `HistoryText` (TMP, Größe 40 = 0,25 m, fett, oben links) mit `ScoreHistory`.
+
+Test im Play Mode:
+- Wurf 1: 5 Pins, Score 5.
+- Wurf 2: 3 weitere Pins. Danach stehen alle Pins wieder, Score 0, Liste `[8]`.
+- Strike (per `eval` alle Pins ausgeblendet, `RegisterThrow()`): Frame endet nach einem Wurf.
+- X ohne Wurf: kein Eintrag. X direkt bei Ankunft der Kugel im Pit: Der offene Wurf zählt nicht im neuen Frame (`throwCount = 0`).
+- 12 Frames: Die Liste zeigt Frame 3–12.
+- Szenen-Reset: Liste leer.
+
+![Liste der Frames links neben der Score-Anzeige (Zoom)](Bilder/frames_liste.png)
+
 ## Offene Punkte
 
 - Hand-Tracking mit der Hand Grab Pose im Headset testen.
-- Für die Rückholung liegen die Trigger-Zonen bereit, ein Skript fehlt noch (Aufgabe für die Studierenden).
+- Die Kugelrückholung nutzt nur `PitZone`. Die `GutterZone_*`-Trigger sind noch ohne Skript.
+- Der Score ist die Zahl der umgefallenen Pins pro Frame, ohne die Bonuspunkte für Strike oder Spare aus den echten Bowlingregeln.
+- Drückt man X, bevor umgefallene Pins ausgeblendet sind (< 5 s nach dem Wurf), werden diese Pins nicht mehr gezählt.
 - `Pin.cs` blendet umgefallene Pins nach 3 s aus. `PinGroup.ResetPositions()` wird bisher nur über die X-Taste (`LaneControls`) aufgerufen, nicht automatisch nach einem Wurf.

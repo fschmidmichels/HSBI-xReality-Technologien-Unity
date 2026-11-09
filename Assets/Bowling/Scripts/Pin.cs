@@ -55,6 +55,11 @@ public class Pin : MonoBehaviour
 
     protected void HidePin()
     {
+        // Nur zählen, wenn der Pin noch sichtbar ist, da HidePin mehrfach eingeplant werden kann.
+        if (gameObject.activeSelf)
+        {
+            ScoreScript.scoreValue += 1;
+        }
         gameObject.SetActive(false);
     }
 }
