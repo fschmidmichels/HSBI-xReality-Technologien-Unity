@@ -9,10 +9,18 @@ public class PinGroup : MonoBehaviour
     private Vector3[] positions;
     private Quaternion[] rotations;
     private int throwCount;
+    private int pinsStandingBeforeThrow;
+
+    // Nummer des nächsten Wurfs im aktuellen Frame, beginnend bei 1 (z. B. für die Anzeige).
+    public int CurrentThrow
+    {
+        get { return throwCount + 1; }
+    }
 
     protected void Awake()
     {
         pins = GetComponentsInChildren<Pin>();
+        pinsStandingBeforeThrow = pins.Length;
         SavePositions();
     }
 
@@ -41,15 +49,34 @@ public class PinGroup : MonoBehaviour
         return count;
     }
 
-    // Wird von BallReturn nach jedem Wurf aufgerufen (einige Sekunden nach Ankunft der Kugel im Pit).
-    public void RegisterThrow()
+    // True, wenn alle Pins ruhig sind (siehe Pin.IsSettled). Von BallReturn vor der Auswertung abgefragt.
+    public bool ArePinsSettled(float maxLinearSpeed, float maxAngularSpeed)
+    {
+        foreach (Pin pin in pins)
+        {
+            if (!pin.IsSettled(maxLinearSpeed, maxAngularSpeed))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Wird von BallReturn nach jedem Wurf aufgerufen (sobald alle Pins ruhig sind).
+    // Liefert das Ergebnis des Wurfs, bevor die Pins gegebenenfalls neu aufgestellt werden.
+    public ThrowResult RegisterThrow()
     {
         throwCount++;
+        int standing = StandingPins();
+        ThrowResult result = new ThrowResult(throwCount, pinsStandingBeforeThrow - standing, standing);
+        pinsStandingBeforeThrow = standing;
+
         // Nach zwei Würfen oder bei einem Strike (alle Pins gefallen) ist der Frame vorbei.
-        if (throwCount >= throwsPerFrame || StandingPins() == 0)
+        if (throwCount >= throwsPerFrame || standing == 0)
         {
             EndFrame();
         }
+        return result;
     }
 
     // Score in die Liste eintragen, Score auf 0, Pins neu aufstellen. Auch für die X-Taste.
@@ -66,6 +93,7 @@ public class PinGroup : MonoBehaviour
     public void ResetPositions()
     {
         throwCount = 0;
+        pinsStandingBeforeThrow = pins.Length;
         for (int index = 0; index < pins.Length; index++)
         {
             // Zuerst aktivieren, sonst wirken die Rigidbody-Werte bei ausgeblendeten Pins nicht.

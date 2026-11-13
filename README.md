@@ -87,6 +87,10 @@ Alternativ die APK in Meta Quest Developer Hub per Drag-and-Drop installieren. D
 | Sound Strike (`Assets/Bowling/Sounds/766871__zusisking__…wav`) | [freesound.org – ZusIsKing, „SPRTInd-Int_BowlingStrike_Zus_OwSfx_Hard“](https://freesound.org/people/ZusIsKing/sounds/766871/) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
 | Sound Pins (`Assets/Bowling/Sounds/151204__bruce-burbank__…aiff`, daraus geschnitten `Sounds/PinHits/PinHit_01–06.wav`) | [freesound.org – Bruce Burbank, „bowling pins stereo.aif“](https://freesound.org/people/Bruce%20Burbank/sounds/151204/) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
 | Sound Rollen (`Assets/Bowling/Sounds/260778__squirmtheverm__rolling-ball-loop.wav`) | [freesound.org – SquirmTheVerm, „Rolling Ball Loop“](https://freesound.org/people/SquirmTheVerm/sounds/260778/) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| Sound Bestätigung nach der Auswertung (`Assets/Bowling/Sounds/541985__rob_marion__gasp_chimes_success_4.wav`) | [freesound.org – Rob_Marion, „GASP_Chimes_Success_4.wav“](https://freesound.org/people/Rob_Marion/sounds/541985/) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| Sound Jubel bei Strike (`Assets/Bowling/Sounds/182571__qubodup__short-crowd-cheer.flac`) | [freesound.org – qubodup, „Short Crowd Cheer.flac“](https://freesound.org/people/qubodup/sounds/182571/) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| Sound Klatschen bei Spare (`Assets/Bowling/Sounds/138114__snakebarney__small-crowd-clapping-2.aiff`) | [freesound.org – snakebarney, „Small Crowd Clapping 2“](https://freesound.org/people/snakebarney/sounds/138114/) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
+| Sound Enttäuschung bei Miss (`Assets/Bowling/Sounds/124996__phmiller42__aww.wav`) | [freesound.org – phmiller42, „aww.wav“](https://freesound.org/people/phmiller42/sounds/124996/) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |
 
 Der vollständige Lizenztext für die VRTK-Inhalte liegt in [`Assets/Bowling/LICENSE_VRTK.md`](Assets/Bowling/LICENSE_VRTK.md). Eine Übersicht der Quellen aller Inhalte unter `Assets/Bowling` steht in [`Assets/Bowling/QUELLEN.md`](Assets/Bowling/QUELLEN.md).
 
@@ -97,6 +101,8 @@ Darüber hinaus werden derzeit keine Assets aus dem Unity Asset Store oder ander
 | Werkzeug | Zweck |
 |---|---|
 | Claude Code (Anthropic) | Erstellung dieser README auf Basis der Projektdateien (Unity-Version, Paketliste, XR-Einstellungen) |
+| ChatGPT 6 Luna (OpenAI) | Erstellung von `GameManager.cs` (Zustandsfolge Bereit → Wurf läuft → Auswertung → Neustart) und Anpassung von `BallReturn.cs` für die Anbindung an den `GameManager` |
+| Claude Code (Anthropic) | Review und Überarbeitung von `GameManager.cs` und `BallReturn.cs` (Auswertung erst nach Ruhe der Pins, Kugelrückgabe nach der Auswertung, gehaltene Kugel nicht zurücksetzen); Erstellung von `EvaluationAudio.cs` und `ThrowResult.cs` (Strike/Spare/Miss mit Sound) sowie `ThrowDisplay.cs` (Anzeige „Wurf x / y“); Recherche der CC0-Sounds |
 
 Weitere eingesetzte KI-Werkzeuge (z. B. für Code, Texturen, 3D-Modelle, Audio) bitte hier mit Zweck ergänzen.
 

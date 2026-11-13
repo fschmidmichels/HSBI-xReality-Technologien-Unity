@@ -8,10 +8,35 @@ public class Pin : MonoBehaviour
 
     private Quaternion defaultRotation;
     private int currentTries;
+    private Rigidbody pinRigidbody;
 
     protected void Awake()
     {
         defaultRotation = transform.localRotation;
+        pinRigidbody = GetComponent<Rigidbody>();
+    }
+
+    // Ruhig = ausgeblendet oder kaum noch in Bewegung und kein Ausblenden mehr eingeplant.
+    // Ein eingeplantes HidePin bedeutet: Der Pin ist gefallen, aber noch nicht gezählt.
+    public bool IsSettled(float maxLinearSpeed, float maxAngularSpeed)
+    {
+        if (!gameObject.activeSelf)
+        {
+            return true;
+        }
+
+        if (IsInvoking(nameof(HidePin)))
+        {
+            return false;
+        }
+
+        if (pinRigidbody == null || pinRigidbody.IsSleeping())
+        {
+            return true;
+        }
+
+        return pinRigidbody.linearVelocity.sqrMagnitude <= maxLinearSpeed * maxLinearSpeed &&
+               pinRigidbody.angularVelocity.sqrMagnitude <= maxAngularSpeed * maxAngularSpeed;
     }
 
     // Ersetzt den Zinnia CollisionNotifier: Nur Treffer durch bewegliche Objekte (Kugel, andere Pins) starten die Prüfung.

@@ -1,7 +1,11 @@
+using Oculus.Interaction;
 using UnityEngine;
 
 public class LaneControls : MonoBehaviour
 {
+    // Abstand in Metern, bis zu dem die Kugel noch als "auf der Ablage" gilt.
+    private const float StartPositionTolerance = 0.1f;
+
     [Tooltip("Eltern-Objekt der Bumper (BowlingLane/Bumpers).")]
     public GameObject bumpers;
 
@@ -16,11 +20,29 @@ public class LaneControls : MonoBehaviour
 
     private Vector3 ballStartPosition;
     private Quaternion ballStartRotation;
+    private Grabbable ballGrabbable;
+
+    // True, solange eine Hand oder ein Controller die Kugel greift (ISDK Grabbable).
+    public bool IsBallHeld
+    {
+        get { return ballGrabbable != null && ballGrabbable.SelectingPointsCount > 0; }
+    }
+
+    // True, wenn die Kugel (ungefähr) auf der Ablage liegt.
+    public bool IsBallAtStart
+    {
+        get
+        {
+            return (ball.position - ballStartPosition).sqrMagnitude <=
+                   StartPositionTolerance * StartPositionTolerance;
+        }
+    }
 
     protected void Start()
     {
         ballStartPosition = ball.position;
         ballStartRotation = ball.rotation;
+        ballGrabbable = ball.GetComponent<Grabbable>();
     }
 
     protected void Update()
