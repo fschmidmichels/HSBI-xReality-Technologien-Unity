@@ -14,31 +14,48 @@ void Spatial(AudioSource s, float minDist) {
 }
 
 // ---------- Kugel ----------
+// Jede AudioSource liegt auf einem eigenen Kindobjekt (RollAudio, HitAudio), weil
+// MetaXRAudioSource nur die erste AudioSource eines Objekts steuert (siehe Woche 5).
+// Vorhandene Kindobjekte und BallAudio werden wiederverwendet, damit Verweise und
+// Szenen-Overrides erhalten bleiben; das Skript ist dadurch wiederholbar.
 const string ballPath = "Assets/Bowling/Prefabs/BowlingBall.prefab";
 var ball = PrefabUtility.LoadPrefabContents(ballPath);
-foreach (var a in ball.GetComponents<AudioSource>()) UnityEngine.Object.DestroyImmediate(a);
-foreach (var a in ball.GetComponents<BallAudio>()) UnityEngine.Object.DestroyImmediate(a);
-var roll = ball.AddComponent<AudioSource>();
+foreach (var a in ball.GetComponents<AudioSource>()) UnityEngine.Object.DestroyImmediate(a);   // alter Aufbau: AudioSources am Wurzelobjekt
+
+AudioSource ChildSource(string name) {
+    var t = ball.transform.Find(name);
+    if (t == null) {
+        t = new GameObject(name).transform;
+        t.SetParent(ball.transform, false);
+        t.gameObject.layer = ball.layer;
+    }
+    var s = t.GetComponent<AudioSource>();
+    return s != null ? s : t.gameObject.AddComponent<AudioSource>();
+}
+
+var roll = ChildSource("RollAudio");
 roll.clip = rollClip; roll.loop = true; roll.playOnAwake = true; roll.volume = 0f;
 Spatial(roll, 1.5f);
-var hit = ball.AddComponent<AudioSource>();
-hit.playOnAwake = false;
+var hit = ChildSource("HitAudio");
+hit.clip = null; hit.loop = false; hit.playOnAwake = false; hit.volume = 1f;
 Spatial(hit, 4f);                       // Strike soll auch am Anlauf gut hörbar sein
-var ba = ball.AddComponent<BallAudio>();
+var ba = ball.GetComponent<BallAudio>();
+if (ba == null) ba = ball.AddComponent<BallAudio>();
 ba.rollSource = roll; ba.hitSource = hit; ba.strikeClip = strikeClip;
 PrefabUtility.SaveAsPrefabAsset(ball, ballPath);
 PrefabUtility.UnloadPrefabContents(ball);
-sb.AppendLine("BowlingBall: 2 AudioSources + BallAudio");
+sb.AppendLine("BowlingBall: BallAudio + Kindobjekte RollAudio und HitAudio mit je einer AudioSource");
 
 // ---------- Pin ----------
 const string pinPath = "Assets/Bowling/Prefabs/CollidableBowlingPin.prefab";
 var pin = PrefabUtility.LoadPrefabContents(pinPath);
-foreach (var a in pin.GetComponents<PinAudio>()) UnityEngine.Object.DestroyImmediate(a);
-foreach (var a in pin.GetComponents<AudioSource>()) UnityEngine.Object.DestroyImmediate(a);
-var ps = pin.AddComponent<AudioSource>();
+// Vorhandene Komponenten wiederverwenden (Verweise und Szenen-Overrides bleiben erhalten).
+var ps = pin.GetComponent<AudioSource>();
+if (ps == null) ps = pin.AddComponent<AudioSource>();
 ps.playOnAwake = false;
 Spatial(ps, 3f);
-var pa = pin.AddComponent<PinAudio>();
+var pa = pin.GetComponent<PinAudio>();
+if (pa == null) pa = pin.AddComponent<PinAudio>();
 pa.hitClips = pinClips;
 PrefabUtility.SaveAsPrefabAsset(pin, pinPath);
 PrefabUtility.UnloadPrefabContents(pin);
