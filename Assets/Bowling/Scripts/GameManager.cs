@@ -145,12 +145,16 @@ public class GameManager : MonoBehaviour
 
             case GameState.Restart:
                 restartElapsed += Time.deltaTime;
-                if (restartElapsed >= restartDuration && IsBallStopped())
+                // Erst bereit, wenn Pins und Kugel ihre Animation beendet haben.
+                bool animating = laneControls.pinGroup.IsResetting || laneControls.IsBallReturning;
+                if (restartElapsed >= restartDuration && !animating && IsBallStopped())
                 {
                     // Kugel war bei der Auswertung gehalten und wurde danach z. B. fallen gelassen: zurück auf die Ablage.
+                    // Die Rückholung ist animiert, deshalb im nächsten Durchlauf erneut prüfen.
                     if (!laneControls.IsBallAtStart && !laneControls.IsBallHeld)
                     {
                         laneControls.ReturnBall();
+                        break;
                     }
                     SetState(GameState.Ready);
                 }
@@ -161,7 +165,9 @@ public class GameManager : MonoBehaviour
     private void HandleBallThrown(Vector3 velocity, Vector3 torque)
     {
         float startSpeedSquared = throwStartSpeed * throwStartSpeed;
-        if (currentState != GameState.Ready || velocity.sqrMagnitude < startSpeedSquared)
+        // Wird die Kugel zur Rückholung aus der Hand genommen, meldet das ISDK ebenfalls einen Wurf: ignorieren.
+        if (currentState != GameState.Ready || laneControls.IsBallReturning ||
+            velocity.sqrMagnitude < startSpeedSquared)
         {
             return;
         }

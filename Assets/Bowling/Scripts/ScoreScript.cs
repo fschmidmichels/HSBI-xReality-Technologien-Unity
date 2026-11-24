@@ -41,4 +41,11 @@ public class ScoreScript : MonoBehaviour
     {
         scoreValue = 0;
     }
+
+    // Neues Spiel: aktuellen Score und Liste der Frames löschen.
+    public static void ResetGame()
+    {
+        scoreValue = 0;
+        history.Clear();
+    }
 }
