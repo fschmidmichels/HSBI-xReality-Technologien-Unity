@@ -55,7 +55,7 @@ Interaction Profiles: *Oculus Touch Controller*, *Meta Quest Touch Pro Controlle
 2. Unity Hub → **Add → Add project from disk** → Projektordner `XRT Projekt` wählen.
 3. Mit Unity 6000.3.18f1 öffnen. Beim ersten Öffnen werden die Pakete heruntergeladen und der `Library`-Ordner aufgebaut (dauert einige Minuten).
 4. Falls der Meta XR Project Setup Tool Hinweise anzeigt (**Meta → Tools → Project Setup Tool**), empfohlene Fixes mit *Fix All* übernehmen.
-5. Szene `Assets/Scenes/SampleScene.unity` öffnen.
+5. Szene `Assets/Scenes/SampleScene.unity` öffnen. Beim Start zeigt der Inspector das Projekt-Readme (`Assets/Readme.asset`) mit Kurzinfos und Links.
 
 ### Bauen
 
@@ -81,7 +81,7 @@ Alternativ die APK in Meta Quest Developer Hub per Drag-and-Drop installieren. D
 |---|---|---|
 | Meta XR All-in-One SDK (inkl. Core, Interaction, MR Utility Kit, Audio, Voice, Platform, Haptics) | Unity Package Manager / [Meta Developer](https://developers.meta.com/horizon/downloads/package/meta-xr-sdk-all-in-one-upm/) | [Meta Platform Technologies SDK License](https://developers.meta.com/horizon/licenses/oculussdk/) |
 | Unity-Pakete (URP, OpenXR, Input System, XR Hands u. a.) | Unity Package Manager (Unity Registry) | [Unity Companion License](https://unity.com/legal/licenses/unity-companion-license) |
-| URP-Projektvorlage (`Assets/TutorialInfo`, `Assets/Settings`, `SampleScene`) | Unity Hub, Vorlage *Universal 3D* | Unity Companion License |
+| URP-Projektvorlage (`Assets/Settings`, `SampleScene`) | Unity Hub, Vorlage *Universal 3D* | Unity Companion License |
 | Bowling-Pin-Modell (`Assets/Bowling/Models/BowlingPin.fbx`) | [VRTK.Tutorials.VRBowling](https://github.com/ExtendRealityLtd/VRTK.Tutorials.VRBowling) von Extend Reality Ltd, [Tutorial 01 „Making a VR Bowling Game“](https://github.com/ExtendRealityLtd/VRTK.Tutorials.VRBowling/tree/master/Documentation/Tutorials/01.MakingAVRBowlingGame) | [MIT License](https://github.com/ExtendRealityLtd/VRTK.Tutorials.VRBowling/blob/master/LICENSE.md), Copyright (c) 2020 Extend Reality Ltd |
 | Skripte `Pin.cs`, `PinGroup.cs` (`Assets/Bowling/Scripts`) | wie oben; angepasst: ohne Zinnia-Abhängigkeit, Unity-6-API (`linearVelocity`), Zurücksetzen der Pins über den Rigidbody | MIT License, Copyright (c) 2020 Extend Reality Ltd |
 | Sound Strike (`Assets/Bowling/Sounds/766871__zusisking__…wav`) | [freesound.org – ZusIsKing, „SPRTInd-Int_BowlingStrike_Zus_OwSfx_Hard“](https://freesound.org/people/ZusIsKing/sounds/766871/) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) |

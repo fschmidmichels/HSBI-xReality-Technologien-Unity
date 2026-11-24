@@ -12,23 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcf7219bab7fe46a1ad266029b2fee19, type: 3}
   m_Name: Readme
   m_EditorClassIdentifier: 
-  icon: {fileID: 2800000, guid: 727a75301c3d24613a3ebcec4a24c2c8, type: 3}
-  title: URP Empty Template
+  icon: {fileID: 0}
+  title: "XRT Projekt \u2013 VR-Bowling"
   sections:
-  - heading: Welcome to the Universal Render Pipeline
-    text: This template includes the settings and assets you need to start creating with the Universal Render Pipeline.
+  - heading: "\xDCber das Projekt"
+    text: "Musterl\xF6sung zum Kurs \u201ExReality Technologien\u201C an der HSBI (Wintersemester 2026/2027). Schritt f\xFCr Schritt entsteht ein VR-Bowling f\xFCr die Meta Quest 3 mit Unity 6.3 (URP), dem Meta XR SDK und OpenXR."
     linkText: 
-    url:
-  - heading: URP Documentation
-    text:
-    linkText: Read more about URP
-    url: https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@latest
-  - heading: Forums
-    text:
-    linkText: Get answers and support
-    url: https://forum.unity.com/forums/universal-render-pipeline.383/
-  - heading: Report bugs
-    text:
-    linkText: Submit a report
-    url: https://unity3d.com/unity/qa/bug-reporting
-  loadedLayout: 1
+    url: 
+  - heading: Szenen und Inhalte
+    text: "Szenen: <b>Assets/Scenes/BowlingVR.unity</b> und <b>Assets/Scenes/SampleScene.unity</b>.\nBowling-Inhalte (Skripte, Prefabs, Materialien, Sounds) liegen unter <b>Assets/Bowling</b>."
+    linkText: 
+    url: 
+  - heading: Projekt-README
+    text: "Unity- und Paketversionen, \xD6ffnen, Bauen und Installieren auf der Quest, externe Assets und eingesetzte KI-Werkzeuge."
+    linkText: "README.md \xF6ffnen"
+    url: README.md
+  - heading: Quellen und Lizenzen
+    text: "Herkunft und Lizenzen aller Inhalte unter Assets/Bowling."
+    linkText: "QUELLEN.md \xF6ffnen"
+    url: Assets/Bowling/QUELLEN.md
+  - heading: Kursunterlagen
+    text: "Wochenmaterialien, Aufgaben und Pr\xFCfungsinformationen zum Kurs."
+    linkText: HSBI-xReality-Technologien auf GitHub
+    url: https://github.com/fschmidmichels/HSBI-xReality-Technologien
+  - heading: "Musterl\xF6sung auf GitHub"
+    text: "Dieses Unity-Projekt mit Stand nach jeder Kurswoche."
+    linkText: HSBI-xReality-Technologien-Unity auf GitHub
+    url: https://github.com/fschmidmichels/HSBI-xReality-Technologien-Unity
